@@ -5,13 +5,9 @@ This Python project is a work in progress. It provides interactive visualization
 ## Getting Started
 
 1. Install dependencies:
-   ```pip install streamlit matplotlib plotly
-
-   ```
+   ```pip install streamlit matplotlib plotly```
 2. Run the app:
-   ```python -m streamlit run main.py
-
-   ```
+   ```python -m streamlit run main.py```
 
 ## Project Structure
 
