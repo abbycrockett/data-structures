@@ -181,17 +181,17 @@ def visualize_tree():
                 explanations.append(f"🌱 Insert node {inserted}: Go {direction} from {parent} since {inserted} {comparison} {parent}.")
         frames[i] = (frame, explanations[-1], highlight)
 
-    # Adjust Grow animation to ensure it vanishes when done
-    if "show_keyframes" not in st.session_state:
-        st.session_state.show_keyframes = False
+    # Only allow one animation (grow or traverse) at a time
+    if "active_animation" not in st.session_state:
+        st.session_state.active_animation = None
 
-    # Animation and visualization
     st.markdown("### 'Grow' your Tree:")
     col1, col2, col3 = st.columns([1, 1, 2])
     with col1:
-        play_tree_animation = st.button("🎬 Grow")
+        play_tree_animation = st.button("🎬 Grow", disabled=st.session_state.active_animation == "traverse")
 
-    if play_tree_animation:
+    if play_tree_animation and st.session_state.active_animation is None:
+        st.session_state.active_animation = "grow"
         st.session_state.show_keyframes = False  # Reset to animation mode
         st.session_state.tree_animation_frames = frames
         st.session_state.tree_current_frame = 0
@@ -203,82 +203,69 @@ def visualize_tree():
                 fig, ax = plt.subplots(figsize=(8, 6))
                 max_height = tree_height(frame)
                 max_width = 2 ** max_height
-                ax.set_xlim(-max_width * 1.2, max_width * 1.2)  # Extra horizontal space
+                ax.set_xlim(-max_width * 1.2, max_width * 1.2)
                 ax.set_ylim(-max_height-1, 1)
                 ax.axis('off')
                 ax.set_facecolor('#F0F8FF')
-                # Track edge positions for dynamic axis limits
                 edge_positions = []
                 draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
-
-                # Dynamically adjust axis limits based on edge positions
                 if edge_positions:
                     x_positions, y_positions = zip(*edge_positions)
                     ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
                     ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-
-                # Add a white border around the canvas
                 fig.patch.set_facecolor('white')
                 fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
-
                 st.pyplot(fig)
-                plt.close(fig)  # Close the figure to free memory
-            import time
+                plt.close(fig)
+            import time, gc
             time.sleep(1.2)
-        placeholder.empty()  # Clear the animation
-        st.session_state.show_keyframes = True  # Enable keyframe navigation after animation
+            gc.collect()  # Explicitly free memory
+        placeholder.empty()
+        st.session_state.show_keyframes = True
+        st.session_state.active_animation = None
 
-    # Keyframe navigation
-    if st.session_state.show_keyframes:
-        # Initialize keyframe state if missing
+    if st.session_state.get("show_keyframes", False) and st.session_state.active_animation is None:
         if "tree_animation_frames" not in st.session_state:
             st.session_state.tree_animation_frames = frames
         if "tree_current_frame" not in st.session_state:
             st.session_state.tree_current_frame = 0
         st.markdown("---")
-        
-        # Use an improved slider for frame navigation with 1-based indexing
         total_steps = len(st.session_state.tree_animation_frames)
+        col1, col2, _ = st.columns([1, 1, 6])
+        with col1:
+            if st.button("Prev", key="tree_prev_button"):
+                st.session_state.tree_current_frame = max(0, st.session_state.tree_current_frame - 1)
+        with col2:
+            if st.button("Next", key="tree_next_button"):
+                st.session_state.tree_current_frame = min(total_steps - 1, st.session_state.tree_current_frame + 1)
         selected_step = st.slider(
-            "Navigate through tree construction:",
+            label="",
             min_value=1,
             max_value=total_steps,
             value=st.session_state.tree_current_frame + 1,
             step=1,
             format="Step %d"
         )
-        
-        # Convert 1-based step to 0-based index
         st.session_state.tree_current_frame = selected_step - 1
         frame, description, highlighted = st.session_state.tree_animation_frames[st.session_state.tree_current_frame]
-        
-        # Show current step description
-        st.info(description)
-        st.write(f"**Tree Height:** {tree_height(frame) - 1}")
-        st.write(f"**Step {st.session_state.tree_current_frame+1}/{len(st.session_state.tree_animation_frames)}:** {description}")
+        st.write(f"**Step {st.session_state.tree_current_frame+1}/{total_steps}:** {description}")
         fig, ax = plt.subplots(figsize=(8, 6))
         max_height = tree_height(frame)
         max_width = 2 ** max_height
-        ax.set_xlim(-max_width * 1.2, max_width * 1.2)  # Extra horizontal space
+        ax.set_xlim(-max_width * 1.2, max_width * 1.2)
         ax.set_ylim(-max_height-1, 1)
         ax.axis('off')
         ax.set_facecolor('#F0F8FF')
-        # Track edge positions for dynamic axis limits
         edge_positions = []
         draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
-
-        # Dynamically adjust axis limits based on edge positions
         if edge_positions:
             x_positions, y_positions = zip(*edge_positions)
             ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
             ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-
-        # Add a white border around the canvas
         fig.patch.set_facecolor('white')
         fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
-
         st.pyplot(fig)
-        plt.close(fig)  # Close the figure to free memory
+        plt.close(fig)
 
     # Add description for tree traversals
     st.markdown(
@@ -303,74 +290,64 @@ def visualize_tree():
         """
     )
 
-    # Add traversal animation logic with keyframe navigation
+    # Only allow one animation (grow or traverse) at a time
     if "show_traversal_keyframes" not in st.session_state:
         st.session_state.show_traversal_keyframes = False
 
-    # Update traversal_type based on user selection
     traversal_type = st.selectbox("Choose tree traversal:", ["Pre-order", "In-order", "Post-order"], index=0)
     st.session_state.traversal_type = traversal_type
-
-    # Traversal input (always synchronized)
     traversal_user_input = st.text_input("Update tree node values if needed (numeric comma-separated):", value=st.session_state.tree_node_values, key="traversal_tree_node_input")
     st.session_state.tree_node_values = traversal_user_input
-
-    # Use st.session_state.tree_node_values everywhere for values
     values = [int(v.strip()) for v in st.session_state.tree_node_values.split(",") if v.strip()]
-
     st.markdown(f"### Traverse your {tree_type}:")
+    play_traversal_animation = st.button("🔄 Traverse", disabled=st.session_state.active_animation == "grow")
 
-    # Add Traverse button
-    play_traversal_animation = st.button("🔄 Traverse")
-
-    if play_traversal_animation:
-        st.session_state.show_traversal_keyframes = False  # Reset to animation mode
+    if play_traversal_animation and st.session_state.active_animation is None:
+        st.session_state.active_animation = "traverse"
+        st.session_state.show_traversal_keyframes = False
         traversal_frames, traversal_explanations = traverse_tree(tree_root, traversal_type)
         st.session_state.traversal_animation_frames = traversal_frames
         st.session_state.traversal_current_frame = 0
         placeholder = st.empty()
         for i, (frame, description, highlighted) in enumerate(traversal_frames):
             with placeholder.container():
-                st.write(f"**Step {i+1}/{len(traversal_frames)}:** {description}")
                 fig, ax = plt.subplots(figsize=(8, 6))
                 max_height = tree_height(frame)
                 max_width = 2 ** max_height
-                ax.set_xlim(-max_width * 1.2, max_width * 1.2)  # Extra horizontal space
+                ax.set_xlim(-max_width * 1.2, max_width * 1.2)
                 ax.set_ylim(-max_height-1, 1)
                 ax.axis('off')
                 ax.set_facecolor('#F0F8FF')
-                # Track edge positions for dynamic axis limits
                 edge_positions = []
                 draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
-
-                # Dynamically adjust axis limits based on edge positions
                 if edge_positions:
                     x_positions, y_positions = zip(*edge_positions)
                     ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
                     ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-
-                # Add a white border around the canvas
                 fig.patch.set_facecolor('white')
                 fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
-
                 st.pyplot(fig)
-                plt.close(fig)  # Close the figure to free memory
-            import time
+                plt.close(fig)
+            import time, gc
             time.sleep(1.2)
-        placeholder.empty()  # Clear the animation
-        st.session_state.show_traversal_keyframes = True  # Enable keyframe navigation after animation
+            gc.collect()
+        placeholder.empty()
+        st.session_state.show_traversal_keyframes = True
+        st.session_state.active_animation = None
 
-    # Keyframe navigation for traversal animation
-    if st.session_state.show_traversal_keyframes:
+    if st.session_state.get("show_traversal_keyframes", False) and st.session_state.active_animation is None:
         st.markdown("---")
-        # Show traversal order above keyframe navigation
         traversal_order = [str(frame[2][0]) for frame in st.session_state.traversal_animation_frames]
-        st.markdown(f"**{traversal_type} traversal order = {', '.join(traversal_order)}.**")
-        
-        # Use an improved slider for traversal frame navigation with 1-based indexing
         total_steps = len(st.session_state.traversal_animation_frames)
+        col1, col2, _ = st.columns([1, 1, 6])
+        with col1:
+            if st.button("Prev", key="traversal_prev_button"):
+                st.session_state.traversal_current_frame = max(0, st.session_state.traversal_current_frame - 1)
+        with col2:
+            if st.button("Next", key="traversal_next_button"):
+                st.session_state.traversal_current_frame = min(total_steps - 1, st.session_state.traversal_current_frame + 1)
         selected_step = st.slider(
-            "Navigate through traversal:",
+            label="",
             min_value=1,
             max_value=total_steps,
             value=st.session_state.traversal_current_frame + 1,
@@ -378,34 +355,23 @@ def visualize_tree():
             format="Step %d",
             key="traversal_slider"
         )
-        
-        # Convert 1-based step to 0-based index
         st.session_state.traversal_current_frame = selected_step - 1
         frame, description, highlighted = st.session_state.traversal_animation_frames[st.session_state.traversal_current_frame]
-        
-        # Show current step description
-        st.info(description)
-        st.write(f"**Step {st.session_state.traversal_current_frame+1}/{len(st.session_state.traversal_animation_frames)}:** {description}")
+        st.write(f"**Step {st.session_state.traversal_current_frame+1}/{total_steps}:** {description}")
         fig, ax = plt.subplots(figsize=(8, 6))
         max_height = tree_height(frame)
         max_width = 2 ** max_height
-        ax.set_xlim(-max_width * 1.2, max_width * 1.2)  # Extra horizontal space
+        ax.set_xlim(-max_width * 1.2, max_width * 1.2)
         ax.set_ylim(-max_height-1, 1)
         ax.axis('off')
         ax.set_facecolor('#F0F8FF')
-        # Track edge positions for dynamic axis limits
         edge_positions = []
         draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
-
-        # Dynamically adjust axis limits based on edge positions
         if edge_positions:
             x_positions, y_positions = zip(*edge_positions)
             ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
             ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-
-        # Add a white border around the canvas
         fig.patch.set_facecolor('white')
         fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
-
         st.pyplot(fig)
-        plt.close(fig)  # Close the figure to free memory
+        plt.close(fig)
