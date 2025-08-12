@@ -17,4 +17,4 @@ Hi! This Python project is a work in progress. It provides interactive visualiza
 
 # General Thoughts
 
-Using Streamlit has helped me learn more about CSS. I have been inspecting the elements more frequently to fix some of the style issues. For this project, instead of having a grand design plan, I just tried to make it resemble my VS Code theme. My main goal with this project was to refresh some data structure concepts and revisit Python for fun.
+Using Streamlit has helped me learn more about CSS. I have been inspecting the elements more frequently to fix some of the style issues. For this project, instead of having a grand design plan, I just tried to make it resemble my VS Code theme lol. My main goal with this project was to refresh some data structure concepts and revisit Python for fun.
