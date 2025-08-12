@@ -12,9 +12,14 @@ def tree_height(node):
 
 def draw_node(node, x, y, dx, highlight_list, ax, level=0, max_width=0, edge_positions=None):
     if node:
-        color = '#FFD700' if node.value in highlight_list else "#7EC28D"
+        highlight_color = '#FFD700'  # Gold for highlighted nodes
+        node_color = "#569CD6"       # Blue for normal nodes
+        edge_color = "#D4D4D4"       # Light grey for edges
+        text_color = "#1E1E1E"       # Dark for text
+
+        color = highlight_color if node.value in highlight_list else node_color
         size = 14 if node.value in highlight_list else 12
-        ax.text(x, y, str(node.value), bbox=dict(facecolor=color, edgecolor='black'), ha='center', va='center', fontsize=size, fontweight='bold', zorder=4)
+        ax.text(x, y, str(node.value), bbox=dict(facecolor=color, edgecolor='black'), ha='center', va='center', fontsize=size, fontweight='bold', color=text_color, zorder=4)
 
         # Track edge positions for dynamic axis limits
         if edge_positions is not None:
@@ -23,12 +28,12 @@ def draw_node(node, x, y, dx, highlight_list, ax, level=0, max_width=0, edge_pos
         next_dx = dx / (2 ** level) if max_width > 0 else dx / 2
 
         if node.left:
-            ax.plot([x, x-next_dx], [y, y-1], 'k-', lw=3, alpha=0.7, zorder=1)
+            ax.plot([x, x-next_dx], [y, y-1], color=edge_color, lw=3, alpha=0.7, zorder=1)
             if edge_positions is not None:
                 edge_positions.append((x-next_dx, y-1))
             draw_node(node.left, x-next_dx, y-1, dx, highlight_list, ax, level + 1, max_width, edge_positions)
         if node.right:
-            ax.plot([x, x+next_dx], [y, y-1], 'k-', lw=3, alpha=0.7, zorder=1)
+            ax.plot([x, x+next_dx], [y, y-1], color=edge_color, lw=3, alpha=0.7, zorder=1)
             if edge_positions is not None:
                 edge_positions.append((x+next_dx, y-1))
             draw_node(node.right, x+next_dx, y-1, dx, highlight_list, ax, level + 1, max_width, edge_positions)
@@ -113,8 +118,9 @@ def find_insertion(prev, curr):
 # Streamlit UI
 
 def visualize_tree():
-    st.header("Trees 🌳")
     st.markdown("""
+    # Trees 🌳
+    <br>
     If you can picture a family tree, you'll recognize the hierarchical structure of a tree.
 
     A ***node*** (🟢) represents an individual element in the tree, connected by edges (➖).
@@ -134,7 +140,7 @@ def visualize_tree():
 
     #### Experimentation
     Branch out and try both types! :)
-    """)
+    """, unsafe_allow_html=True)
 
     # User input section
     tree_type = st.selectbox("Choose tree type:", ["Binary Search Tree (BST)", "AVL Tree"], index=0)
@@ -206,14 +212,14 @@ def visualize_tree():
                 ax.set_xlim(-max_width * 1.2, max_width * 1.2)
                 ax.set_ylim(-max_height-1, 1)
                 ax.axis('off')
-                ax.set_facecolor('#F0F8FF')
+                ax.set_facecolor('#1E1E1E') 
                 edge_positions = []
                 draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
                 if edge_positions:
                     x_positions, y_positions = zip(*edge_positions)
                     ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
                     ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-                fig.patch.set_facecolor('white')
+                fig.patch.set_facecolor('#1E1E1E')
                 fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
                 st.pyplot(fig)
                 plt.close(fig)
@@ -245,15 +251,15 @@ def visualize_tree():
         frame, description, highlighted = st.session_state.tree_animation_frames[st.session_state.tree_current_frame]
         
         # Step info with buttons on the right
-        col1, col2, col3 = st.columns([5, 1, 1])
+        col1, col2, col3 = st.columns([5, 0.5, 0.5])  # Adjusted spacing for closer buttons
         with col1:
             st.write(f"**Step {st.session_state.tree_current_frame+1}/{total_steps}:** {description if description else 'Building tree...'}")
         with col2:
-            if st.button("Prev", key="tree_prev_button"):
+            if st.button("←", key="tree_prev_button"):
                 st.session_state.tree_current_frame = max(0, st.session_state.tree_current_frame - 1)
                 st.rerun()
         with col3:
-            if st.button("Next", key="tree_next_button"):
+            if st.button("→", key="tree_next_button"):
                 st.session_state.tree_current_frame = min(total_steps - 1, st.session_state.tree_current_frame + 1)
                 st.rerun()
         fig, ax = plt.subplots(figsize=(8, 6))
@@ -262,14 +268,14 @@ def visualize_tree():
         ax.set_xlim(-max_width * 1.2, max_width * 1.2)
         ax.set_ylim(-max_height-1, 1)
         ax.axis('off')
-        ax.set_facecolor('#F0F8FF')
+        ax.set_facecolor('#1E1E1E')  # Dark Slate Gray background
         edge_positions = []
         draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
         if edge_positions:
             x_positions, y_positions = zip(*edge_positions)
             ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
             ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-        fig.patch.set_facecolor('white')
+        fig.patch.set_facecolor('#1E1E1E')
         fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
         st.pyplot(fig)
         plt.close(fig)
@@ -325,14 +331,14 @@ def visualize_tree():
                 ax.set_xlim(-max_width * 1.2, max_width * 1.2)
                 ax.set_ylim(-max_height-1, 1)
                 ax.axis('off')
-                ax.set_facecolor('#F0F8FF')
+                ax.set_facecolor('#1E1E1E')  # Dark Slate Gray background
                 edge_positions = []
                 draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
                 if edge_positions:
                     x_positions, y_positions = zip(*edge_positions)
                     ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
                     ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-                fig.patch.set_facecolor('white')
+                fig.patch.set_facecolor('#1E1E1E')
                 fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
                 st.pyplot(fig)
                 plt.close(fig)
@@ -362,15 +368,15 @@ def visualize_tree():
         frame, description, highlighted = st.session_state.traversal_animation_frames[st.session_state.traversal_current_frame]
         
         # Step info with buttons on the right
-        col1, col2, col3 = st.columns([5, 1, 1])
+        col1, col2, col3 = st.columns([3, 0.5, 0.5])  # Adjusted spacing for closer buttons
         with col1:
             st.write(f"**Step {st.session_state.traversal_current_frame+1}/{total_steps}:** {description if description else 'Traversing tree...'}")
         with col2:
-            if st.button("Prev", key="traversal_prev_button"):
+            if st.button("←", key="traversal_prev_button"):
                 st.session_state.traversal_current_frame = max(0, st.session_state.traversal_current_frame - 1)
                 st.rerun()
         with col3:
-            if st.button("Next", key="traversal_next_button"):
+            if st.button("→", key="traversal_next_button"):
                 st.session_state.traversal_current_frame = min(total_steps - 1, st.session_state.traversal_current_frame + 1)
                 st.rerun()
         fig, ax = plt.subplots(figsize=(8, 6))
@@ -379,14 +385,14 @@ def visualize_tree():
         ax.set_xlim(-max_width * 1.2, max_width * 1.2)
         ax.set_ylim(-max_height-1, 1)
         ax.axis('off')
-        ax.set_facecolor('#F0F8FF')
+        ax.set_facecolor('#1E1E1E')  # Dark Slate Gray background
         edge_positions = []
         draw_node(frame, 0, 0, max_width, highlighted, ax, max_width=max_width, edge_positions=edge_positions)
         if edge_positions:
             x_positions, y_positions = zip(*edge_positions)
             ax.set_xlim(min(x_positions) - 1, max(x_positions) + 1)
             ax.set_ylim(min(y_positions) - 1, max(y_positions) + 1)
-        fig.patch.set_facecolor('white')
+        fig.patch.set_facecolor('#1E1E1E')
         fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
         st.pyplot(fig)
         plt.close(fig)
