@@ -34,6 +34,10 @@
     border-right: 1px solid var(--vscode-border);
 }
 
+.css-1d391kg, .css-1a806up, .css-1r6slb0 :hover, :active {
+    border-color: 1px solid var(--vscode-pink) !important;
+}
+
 /* Headers */
 h1, h2, h3, h4, h5, h6 {
     color: var(--vscode-function) !important;

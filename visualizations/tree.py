@@ -119,7 +119,7 @@ def find_insertion(prev, curr):
 
 def visualize_tree():
     st.markdown("""
-    # Trees 🌳
+    # Tree 🌳
     <br>
     If you can picture a family tree, you'll recognize the hierarchical structure of a tree.
 

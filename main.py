@@ -43,8 +43,8 @@ st.markdown("""
 
 option = st.sidebar.selectbox(
     "Pick a data structure:",
-    ("Tree", "Stack"),
-    index=1
+    ("Tree", "Stack", "Queue"),
+    index=2
 )
 
 # Add a "Problems" panel at the bottom to mimic VS Code UI
@@ -56,6 +56,7 @@ with st.sidebar:
         &nbsp;&nbsp;📁 Data Structures<br/>
         &nbsp;&nbsp;&nbsp;&nbsp;└─ 🌳 Tree<br/>
         &nbsp;&nbsp;&nbsp;&nbsp;└─ 📚 Stack<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;└─ 👥 Queue<br/>
     </div>
     """, unsafe_allow_html=True)
 
@@ -64,7 +65,10 @@ if option == "Tree":
 elif option == "Stack":
     from visualizations.stack import visualize_stack
     visualize_stack()
-    
+elif option == "Queue":
+    from visualizations.queue import visualize_queue
+    visualize_queue()
+
 # Add a footer with VS Code-like status bar
 st.markdown("""
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #007acc; color: white; font-size: 12px; padding: 2px 8px; display: flex; justify-content: space-between;">
