@@ -43,7 +43,7 @@ def draw_node(node, x, y, dx, highlight_list, ax, level=0, max_width=0, edge_pos
 def insert_bst(root, value):
     if not root:
         return TreeNode(value)
-    if str(value) < str(root.value):
+    if value < root.value:  
         root.left = insert_bst(root.left, value)
     else:
         root.right = insert_bst(root.right, value)
