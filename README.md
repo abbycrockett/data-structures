@@ -1,12 +1,10 @@
 # Data Structure Visualizer
 
-Hi! This Python project is a work in progress. It provides interactive visualizations for common data structures like trees & stacks. The application uses Streamlit for the GUI and matplotlib/plotly for visualizations.
+Hi! This Python project is a work in progress. It provides interactive visualizations for common data structures. The application uses Streamlit for the GUI and matplotlib/plotly for visualizations.
 
 ## Getting Started
 
-1. Install dependencies:
-   ```pip install -r requirements.txt```
-2. Run the app:
+1. Run the app:
    ```python -m streamlit run main.py```
 
 ## Project Structure
@@ -17,4 +15,4 @@ Hi! This Python project is a work in progress. It provides interactive visualiza
 
 # General Thoughts
 
-Using Streamlit has helped me learn more about CSS. I have been inspecting the elements more frequently to fix some of the style issues. For this project, instead of having a grand design plan lol, I just tried to make it resemble my VS Code theme. My main goal with this project was to refresh some data structure concepts and revisit Python for fun.
+Since my last project was more design-focused, I wanted to revisit Python & some basic data structures. I mostly just copied the look of my VS Code theme, lol. I was surprised to encounter a lot more CSS issues using Streamlit. Using the browser tools, I was able to override some of Streamlit’s default coloring.

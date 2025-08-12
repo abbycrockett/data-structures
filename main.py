@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from visualizations.tree import visualize_tree
+import shutil
 
 # Set page config - must be the first Streamlit command
 st.set_page_config(
@@ -43,8 +44,8 @@ st.markdown("""
 
 option = st.sidebar.selectbox(
     "Pick a data structure:",
-    ("Tree", "Stack", "Queue"),
-    index=2
+    ("Tree", "Stack", "Queue", "Linked List"),
+    index=3
 )
 
 # Add a "Problems" panel at the bottom to mimic VS Code UI
@@ -57,8 +58,18 @@ with st.sidebar:
         &nbsp;&nbsp;&nbsp;&nbsp;└─ 🌳 Tree<br/>
         &nbsp;&nbsp;&nbsp;&nbsp;└─ 📚 Stack<br/>
         &nbsp;&nbsp;&nbsp;&nbsp;└─ 👥 Queue<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;└─ 🔗 Linked List<br/>
     </div>
     """, unsafe_allow_html=True)
+
+# Function to clear __pycache__ directories
+def clear_pycache():
+    for root, dirs, files in os.walk(os.path.dirname(__file__)):
+        if "__pycache__" in dirs:
+            shutil.rmtree(os.path.join(root, "__pycache__"))
+
+# Clear __pycache__ before visualizing the selected data structure
+clear_pycache()
 
 if option == "Tree":
     visualize_tree()
@@ -68,6 +79,9 @@ elif option == "Stack":
 elif option == "Queue":
     from visualizations.queue import visualize_queue
     visualize_queue()
+elif option == "Linked List":
+    from visualizations.linked_list import visualize_linked_list
+    visualize_linked_list()
 
 # Add a footer with VS Code-like status bar
 st.markdown("""
