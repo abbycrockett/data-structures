@@ -55,8 +55,7 @@ with st.sidebar:
         <strong style="color: #569cd6;">OUTLINE</strong><br/>
         &nbsp;&nbsp;📁 Data Structures<br/>
         &nbsp;&nbsp;&nbsp;&nbsp;└─ 🌳 Tree<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ BST<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ AVL<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;└─ 📚 Stack<br/>
     </div>
     """, unsafe_allow_html=True)
 
