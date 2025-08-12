@@ -8,7 +8,7 @@
     --vscode-text: #d4d4d4;
     --vscode-comment: #608b4e;
     --vscode-function: #569cd6;
-    --vscode-keyword: #c586c0;
+    --vscode-keyword: #f40cdc;
     --vscode-string: #ce9178;
     --vscode-number: #b5cea8;
     --vscode-green: #7EC28D;
@@ -19,6 +19,7 @@
     --vscode-button: #0e639c;
     --vscode-button-hover: #1177bb;
     --vscode-scrollbar: #424242;
+    --vscode-pink: #f40cdc;
 }
 
 /* Main container styling */
@@ -98,6 +99,11 @@ input, textarea, .stTextInput>div>div>input, .stTextArea>div>div>textarea {
 .stSelectbox>div>div>div {
     background-color: var(--vscode-bg) !important;
     color: var(--vscode-text) !important;
+    border-color: var(--vscode-pink) !important;
+}
+
+.st-da, .st-db, .st-dc, .st-d9{
+    border-color: var(--vscode-pink) !important;
 }
 
 /* Slider */

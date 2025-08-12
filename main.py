@@ -43,8 +43,8 @@ st.markdown("""
 
 option = st.sidebar.selectbox(
     "Pick a data structure:",
-    ("Tree"),
-    index=0
+    ("Tree", "Stack"),
+    index=1
 )
 
 # Add a "Problems" panel at the bottom to mimic VS Code UI
@@ -62,10 +62,13 @@ with st.sidebar:
 
 if option == "Tree":
     visualize_tree()
+elif option == "Stack":
+    from visualizations.stack import visualize_stack
+    visualize_stack()
     
 # Add a footer with VS Code-like status bar
 st.markdown("""
-<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #007acc; color: white; font-size: 12px; padding: 2px 10px; display: flex; justify-content: space-between;">
+<div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #007acc; color: white; font-size: 12px; padding: 2px 8px; display: flex; justify-content: space-between;">
     <div>🐍 Python 3.12</div>
     <div>©️ abbycrockett</div>
 </div>
