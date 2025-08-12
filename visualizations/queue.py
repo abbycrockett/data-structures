@@ -83,10 +83,10 @@ def draw_queue(queue, highlight_index=None, return_fig=False):
         ax.add_patch(rect)
         ax.text(x + rect_width/2, rect_y + rect_height/2 - rect_height*0.07, str(value), ha='center', va='center', fontsize=font_size, fontweight='bold', color='#1E1E1E')
         if i == 0:
-            label = 'Front' if len(items) == 1 else 'Front'
+            label = 'Head' if len(items) == 1 else 'Head'
             ax.text(x + rect_width/2, rect_y + rect_height + 0.6, label, ha='center', va='center', fontsize=top_font_size, color='#1E1E1E', fontweight='bold', bbox=dict(facecolor='#B7E1F7', edgecolor='none', boxstyle='round,pad=0.24'))
         if i == len(items) - 1 and len(items) > 1:
-            ax.text(x + rect_width/2, rect_y + rect_height + 0.6, 'Rear', ha='center', va='center', fontsize=top_font_size, color='#1E1E1E', fontweight='bold', bbox=dict(facecolor='#B7E1F7', edgecolor='none', boxstyle='round,pad=0.24'))
+            ax.text(x + rect_width/2, rect_y + rect_height + 0.6, 'Tail', ha='center', va='center', fontsize=top_font_size, color='#1E1E1E', fontweight='bold', bbox=dict(facecolor='#B7E1F7', edgecolor='none', boxstyle='round,pad=0.24'))
 
     if return_fig:
         return fig

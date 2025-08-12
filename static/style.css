@@ -38,6 +38,19 @@
     border-color: 1px solid var(--vscode-pink) !important;
 }
 
+.st-cv:active {
+    border-bottom-color: var(--vscode-pink);
+}
+.st-cu:active {
+    border-top-color: var(--vscode-pink);
+}
+.st-ct:active {
+    border-right-color: var(--vscode-pink);
+}
+.st-cs:active {
+    border-left-color: var(--vscode-pink);
+}
+
 /* Headers */
 h1, h2, h3, h4, h5, h6 {
     color: var(--vscode-function) !important;
