@@ -231,13 +231,8 @@ def visualize_tree():
             st.session_state.tree_current_frame = 0
         st.markdown("---")
         total_steps = len(st.session_state.tree_animation_frames)
-        col1, col2, _ = st.columns([1, 1, 6])
-        with col1:
-            if st.button("Prev", key="tree_prev_button"):
-                st.session_state.tree_current_frame = max(0, st.session_state.tree_current_frame - 1)
-        with col2:
-            if st.button("Next", key="tree_next_button"):
-                st.session_state.tree_current_frame = min(total_steps - 1, st.session_state.tree_current_frame + 1)
+        
+        # Slider for step selection
         selected_step = st.slider(
             label="",
             min_value=1,
@@ -248,7 +243,19 @@ def visualize_tree():
         )
         st.session_state.tree_current_frame = selected_step - 1
         frame, description, highlighted = st.session_state.tree_animation_frames[st.session_state.tree_current_frame]
-        st.write(f"**Step {st.session_state.tree_current_frame+1}/{total_steps}:** {description}")
+        
+        # Step info with buttons on the right
+        col1, col2, col3 = st.columns([5, 1, 1])
+        with col1:
+            st.write(f"**Step {st.session_state.tree_current_frame+1}/{total_steps}:** {description if description else 'Building tree...'}")
+        with col2:
+            if st.button("Prev", key="tree_prev_button"):
+                st.session_state.tree_current_frame = max(0, st.session_state.tree_current_frame - 1)
+                st.rerun()
+        with col3:
+            if st.button("Next", key="tree_next_button"):
+                st.session_state.tree_current_frame = min(total_steps - 1, st.session_state.tree_current_frame + 1)
+                st.rerun()
         fig, ax = plt.subplots(figsize=(8, 6))
         max_height = tree_height(frame)
         max_width = 2 ** max_height
@@ -311,6 +318,7 @@ def visualize_tree():
         placeholder = st.empty()
         for i, (frame, description, highlighted) in enumerate(traversal_frames):
             with placeholder.container():
+                st.write(f"**Step {i+1}/{len(traversal_frames)}:** {description if description else 'Traversing tree...'}")
                 fig, ax = plt.subplots(figsize=(8, 6))
                 max_height = tree_height(frame)
                 max_width = 2 ** max_height
@@ -339,13 +347,8 @@ def visualize_tree():
         st.markdown("---")
         traversal_order = [str(frame[2][0]) for frame in st.session_state.traversal_animation_frames]
         total_steps = len(st.session_state.traversal_animation_frames)
-        col1, col2, _ = st.columns([1, 1, 6])
-        with col1:
-            if st.button("Prev", key="traversal_prev_button"):
-                st.session_state.traversal_current_frame = max(0, st.session_state.traversal_current_frame - 1)
-        with col2:
-            if st.button("Next", key="traversal_next_button"):
-                st.session_state.traversal_current_frame = min(total_steps - 1, st.session_state.traversal_current_frame + 1)
+        
+        # Slider for step selection
         selected_step = st.slider(
             label="",
             min_value=1,
@@ -357,7 +360,19 @@ def visualize_tree():
         )
         st.session_state.traversal_current_frame = selected_step - 1
         frame, description, highlighted = st.session_state.traversal_animation_frames[st.session_state.traversal_current_frame]
-        st.write(f"**Step {st.session_state.traversal_current_frame+1}/{total_steps}:** {description}")
+        
+        # Step info with buttons on the right
+        col1, col2, col3 = st.columns([5, 1, 1])
+        with col1:
+            st.write(f"**Step {st.session_state.traversal_current_frame+1}/{total_steps}:** {description if description else 'Traversing tree...'}")
+        with col2:
+            if st.button("Prev", key="traversal_prev_button"):
+                st.session_state.traversal_current_frame = max(0, st.session_state.traversal_current_frame - 1)
+                st.rerun()
+        with col3:
+            if st.button("Next", key="traversal_next_button"):
+                st.session_state.traversal_current_frame = min(total_steps - 1, st.session_state.traversal_current_frame + 1)
+                st.rerun()
         fig, ax = plt.subplots(figsize=(8, 6))
         max_height = tree_height(frame)
         max_width = 2 ** max_height
